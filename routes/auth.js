@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const userModel = require('../models/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 router.route('/register')
     .post(async (req, res ) => {
@@ -9,14 +10,16 @@ router.route('/register')
         if (!username || !email || !password) return res.status(400).json({'message': 'input required fields'})
         
         try {
-            const hashedPwd = await bcrypt.hash(password, 10)
+            const hashedPwd = await bcrypt.hash(req.body.password, 10)
             const response = await userModel.create({
                 username: req.body.username,
                 email: req.body.email,
                 password: hashedPwd,
             })
 
-            res.status(201).json(response)
+            const {password, ...others} = response._doc
+
+            res.status(201).json(others)
         } catch (error) {
             res.status(500).json(error.message)
         }
@@ -40,12 +43,13 @@ router.route('/login')
                     email: req.body.email,
                     password: hashedPwd,
                 })
+                const {password, ...others} = user._doc
 
-                res.status(201).json(response)
+                res.status(201).json(others)
             } else {
                 res.sendStatus(401);
             }
-             
+
         } catch (error) {
             res.status(500).json(error.message)
         }

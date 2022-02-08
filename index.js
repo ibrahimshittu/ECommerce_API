@@ -7,8 +7,8 @@ const authRoute = require('./routes/auth')
 
 app.use(express.json());
 
-app.use('/api/user', userRoute)
-app.use('/api/user', authRoute)
+app.use('/api/auth', userRoute)
+app.use('/api/auth', authRoute)
 
 
 mongoose.connect(process.env.DATABASE_URI).then(()=>{
