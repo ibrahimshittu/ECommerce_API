@@ -25,6 +25,7 @@ router.route('/register')
         }
     })
 
+
 router.route('/login')
     .post(async (req, res ) => {
 
@@ -32,28 +33,26 @@ router.route('/login')
         if (!username || !password) return res.status(400).json({'message': 'input required fields'})
         
         try {
-            const user = await User.findOne({username: req.body.username})
-            !user && res.status(204).json('no user found')
+            const user = await userModel.findOne({username: req.body.username})
+            if (!user) return res.status(204).json('no user found')
 
-            const passwordMatch = await bcrypt.compare(user.password, req.body.password)
+            const passwordMatch = bcrypt.compare(user.password, req.body.password)
             if (passwordMatch) {
                 
-                const response = await userModel.create({
-                    username: req.body.username,
-                    email: req.body.email,
-                    password: hashedPwd,
-                })
+                const accessToken =jwt.sign(
+                    {"id": user.username, "isAdmin": user.isAdmin},
+                    process.env.ACCESS_TOKEN_SECRET,
+                    {expiresIn: '3000s'}
+                )
                 const {password, ...others} = user._doc
 
-                res.status(201).json(others)
+                res.status(200).json({...others, accessToken})
             } else {
                 res.sendStatus(401);
             }
-
         } catch (error) {
             res.status(500).json(error.message)
         }
     })
-
 
 module.exports = router
