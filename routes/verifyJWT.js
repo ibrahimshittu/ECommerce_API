@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const verifyJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) return res.sendStatus(401)
+
+    const token = authHeader.split(' ')[1]
    
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
@@ -17,4 +19,17 @@ const verifyJWT = (req, res, next) => {
     
 }
 
-module.exports = verifyJWT;
+const verifyTokenAndAuthorization = (req, res, next) => {
+    verifyJWT(req, res, () => {
+        if (req.user.id === req.params.id || req.user.isAdmin) {
+            next()
+        } else {
+            res.status(403).json({
+                message: 'Forbidden'
+            });
+        }
+    });
+
+}
+
+module.exports = {verifyJWT, verifyTokenAndAuthorization};
