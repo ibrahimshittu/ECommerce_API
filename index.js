@@ -3,11 +3,13 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const userRoute = require('./routes/user')
+const productRoute = require('./routes/product')
 const authRoute = require('./routes/auth')
 
 app.use(express.json());
 
 app.use('/api/user', userRoute)
+app.use('/api/product', productRoute)
 app.use('/api/auth', authRoute)
 
 
