@@ -14,7 +14,6 @@ const verifyJWT = (req, res, next) => {
             });
         } else {
             req.user = user;
-            console.log(req.user)
             next();
         }
     });
@@ -23,8 +22,6 @@ const verifyJWT = (req, res, next) => {
 
 const verifyTokenAndAuthorization = (req, res, next) => {
     verifyJWT(req, res, () => {
-        console.log(req.user.id)
-        console.log(req.params.id)
         if (req.user.id === req.params.id || req.user.isAdmin) {
             next()
         } else {
@@ -36,4 +33,17 @@ const verifyTokenAndAuthorization = (req, res, next) => {
 
 }
 
-module.exports = {verifyTokenAndAuthorization};
+const verifyTokenAndAdmin = (req, res, next) => {
+    verifyJWT(req, res, () => {
+        if (req.user.isAdmin) {
+            next()
+        } else {
+            res.status(403).json({
+                message: 'Yu are not allowed to do that!'
+            });
+        }
+    });
+
+}
+
+module.exports = {verifyTokenAndAuthorization, verifyTokenAndAdmin, verifyJWT};
