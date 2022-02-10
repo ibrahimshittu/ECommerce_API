@@ -40,7 +40,7 @@ router.route('/login')
             if (passwordMatch) {
                 
                 const accessToken =jwt.sign(
-                    {"id": user.username, "isAdmin": user.isAdmin},
+                    {"id": user.id, "isAdmin": user.isAdmin},
                     process.env.ACCESS_TOKEN_SECRET,
                     {expiresIn: '3000s'}
                 )
