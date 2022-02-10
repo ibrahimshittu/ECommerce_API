@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {verifyTokenAndAuthorization, verifyTokenAndAdmin} = require('../routes/verifyJWT')
+const {verifyTokenAndAuthorization, verifyTokenAndAdmin, verifyJWT} = require('../routes/verifyJWT')
 const userModel = require('../models/user')
 const bcrypt = require('bcrypt')
 
@@ -46,32 +46,33 @@ router.get('/',verifyTokenAndAdmin, async (req, res ) => {
     try {
         query = req.query.new
         const users = query
-        ? await User.find().sort({ _id: -1 }).limit(5)
-        : await User.find();
+        ? await userModel.find().sort({ _id: -1 }).limit(5)
+        : await userModel.find();
         res.status(200).json(users)
     } catch (error) {
         res.sendStatus(403)
     }
 })
 
-router.get('/stats',verifyTokenAndAdmin, async (req, res ) => {
-
-    const date = new Date()
-    const lastyear = Date(date.setFullYear(date.getFullYear() - 1))
+router.get('/data',verifyTokenAndAdmin, async (req, res ) => {
+    const date = new Date();
+    const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+    console.log(lastYear)
 
     try {
         const data = await userModel.aggregate([
-            {$match: {createdAt: {$gte: lastyear}}},
+            {$match: {createdAt: {$gte: lastYear}}},
             {$project: {month: {$month: "$createdAt"}}},
-            { $group: {_id: "$month",
+            {$group: {_id: "$month",
                         total: {$sum: 1}
                     }
             }
         ])
         res.status(200).json(data)
-    } catch (error) {
-        res.sendStatus(403)
+    } catch (err) {
+        res.status(500).json(err)
     }
 })
+
     
 module.exports = router 
