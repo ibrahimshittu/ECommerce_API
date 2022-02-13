@@ -54,7 +54,7 @@ router.get('/',verifyTokenAndAdmin, async (req, res ) => {
     }
 })
 
-router.get('/data',verifyTokenAndAdmin, async (req, res ) => {
+router.get('/stats',verifyTokenAndAdmin, async (req, res ) => {
     const date = new Date();
     const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
     console.log(lastYear)

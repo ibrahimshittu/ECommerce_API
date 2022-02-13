@@ -42,7 +42,7 @@ router.route('/login')
                 const accessToken =jwt.sign(
                     {"id": user.id, "isAdmin": user.isAdmin},
                     process.env.ACCESS_TOKEN_SECRET,
-                    {expiresIn: '3000s'}
+                    {expiresIn: '3d'}
                 )
                 const {password, ...others} = user._doc
 
