@@ -4,39 +4,39 @@ const orderModel = require('../models/order')
 
 
 
-router.post('/',verifyTokenAndAdmin, async (req, res ) => {
-    const newProduct = productModel(req.body)
+router.post('/',verifyJWT, async (req, res ) => {
+    const newOrder = orderModel(req.body)
     try {
-        const product = await newProduct.save()
-        console.log(product)
+        const order = await newOrder.save()
+        console.log(order)
 
-        res.status(200).json(product)
+        res.status(200).json(order)
     } catch (error) {
         res.status(403).json("Error: " + error)
     }
 })
 
-router.get('/',verifyTokenAndAdmin, async (req, res ) => {
+router.get('/', async (req, res ) => {
     try {
-        const product = await productModel.find()
+        const order = await orderModel.find()
 
-        res.status(200).json(product)
+        res.status(200).json(order)
     } catch (error) {
         res.status(403).json("Error: " + error)
     }
 })
 
 router.put('/:id',verifyTokenAndAdmin, async (req, res ) => {
-    const product = productModel.findById(req.params.id)
-    if (!product) {
-        return res.status(404).send('The product with the given ID was not found.')
+    const order = orderModel.findById(req.params.id)
+    if (!order) {
+        return res.status(404).send('The order with the given ID was not found.')
     }
     try {
-        const product = await productModel.findByIdAndUpdate(req.params.id, {
+        const order = await orderModel.findByIdAndUpdate(req.params.id, {
             $set: req.body
             }, {new: true})
 
-        res.status(200).json(product)
+        res.status(200).json(order)
 
     } catch (error) {
         res.status(403).json("Error: " + error)
@@ -45,18 +45,18 @@ router.put('/:id',verifyTokenAndAdmin, async (req, res ) => {
 
 router.delete('/:id',verifyTokenAndAdmin, async (req, res ) => {
     try {
-        const product = await productModel.findByIdAndDelete(req.params.id)
+        const order = await orderModel.findByIdAndDelete(req.params.id)
        
-        res.status(200).json("product deleted")
+        res.status(200).json("order deleted")
     } catch (error) {
         res.status(403).json("Error: " + error)
     }
 })
 
-router.get('/:id',verifyTokenAndAdmin, async (req, res ) => {
+router.get('/:userId',verifyTokenAndAuthorization, async (req, res ) => {
     try {
-        const product = await productModel.findById(req.params.id)
-        res.status(200).json(product)
+        const order = await orderModel.find({ userId: req.params.userId });
+        res.status(200).json(order)
     } catch (error) {
         res.status(403).json("Error: " + error)
     }
