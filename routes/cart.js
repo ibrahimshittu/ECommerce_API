@@ -15,7 +15,7 @@ router.post('/',verifyJWT, async (req, res ) => {
     }
 })
 
-router.get('/', async (req, res ) => {
+router.get('/', verifyTokenAndAdmin,async (req, res ) => {
     try {
         const cart = await cartModel.find()
 
@@ -54,7 +54,7 @@ router.delete('/:id',verifyTokenAndAuthorization, async (req, res ) => {
 
 router.get('/:userId',verifyTokenAndAuthorization, async (req, res ) => {
     try {
-        const cart = await cartModel.find({ userId: req.params.userId });
+        const cart = await cartModel.findOne({ userId: req.params.userId });
         res.status(200).json(cart)
     } catch (error) {
         res.status(403).json("Error: " + error)
