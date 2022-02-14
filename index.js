@@ -5,12 +5,16 @@ const mongoose = require('mongoose')
 const userRoute = require('./routes/user')
 const productRoute = require('./routes/product')
 const authRoute = require('./routes/auth')
+const cartRoute = require('./routes/cart')
+const orderRoute = require('./routes/order')
 
 app.use(express.json());
 
 app.use('/api/user', userRoute)
 app.use('/api/product', productRoute)
 app.use('/api/auth', authRoute)
+app.use('/api/cart', cartRoute)
+app.use('/api/order', orderRoute)
 
 
 mongoose.connect(process.env.DATABASE_URI).then(()=>{
